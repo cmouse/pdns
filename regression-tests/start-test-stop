@@ -369,7 +369,7 @@ then
 	optout=1
 fi
 
-
+set +e
 # check for lua
 if grep -q "^#define HAVE_LUA 1" ../config.h
 then
@@ -379,6 +379,7 @@ else
   lua_prequery=""
   skiplua=1
 fi
+set -e
 
 case $context in
 		ext-nsd | ext-nsd-nsec | ext-nsd-nsec3 | ext-nsd-nsec3-optout)
@@ -968,8 +969,8 @@ startslave ()
 			-e "INSERT INTO tsigkeys (name, algorithm,secret) VALUES('test', '$ALGORITHM', '$KEY')"
 			mysql --user="$GMYSQL2USER" --password="$GMYSQL2PASSWD" --host="$GMYSQL2HOST" "$GMYSQL2DB" \
 			-e "INSERT INTO domainmetadata (domain_id, kind, content) SELECT id, 'AXFR-MASTER-TSIG', 'test' FROM domains WHERE name = 'tsig.com'"
-                	echo $skipreasons | grep -q nolua
-	                if [ $? -ne 0 ]; then
+			echo $skipreasons | grep -q nolua
+			if [ $? -ne 0 ]; then
 				mysql --user="$GMYSQL2USER" --password="$GMYSQL2PASSWD" --host="$GMYSQL2HOST" "$GMYSQL2DB" \
                 	        -e "INSERT INTO domainmetadata (domain_id,kind,content) SELECT id,'AXFR-SOURCE','127.0.0.2' FROM domains WHERE name = 'stest.com'"
 			fi
