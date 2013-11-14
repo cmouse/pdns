@@ -102,9 +102,10 @@ catch(...) {
 
 Resolver::~Resolver()
 {
-   for(std::map<std::string,int>::iterator iter = locals.begin(); iter != locals.end(); iter++) {
-       close(iter->second);
-   }
+  for(std::map<std::string,int>::iterator iter = locals.begin(); iter != locals.end(); iter++) {
+    if(iter->second >= 0)
+      close(iter->second);
+  }
 }
 
 uint16_t Resolver::sendResolve(const ComboAddress& remote, const ComboAddress& local,
