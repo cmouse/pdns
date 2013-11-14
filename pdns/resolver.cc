@@ -152,7 +152,8 @@ uint16_t Resolver::sendResolve(const ComboAddress& remote, const ComboAddress& l
         sock = lptr->second;
      } else {
         // try to make socket
-        sock = makeQuerySocket(local, true); 
+        sock = makeQuerySocket(local, true);
+        Utility::setNonBlocking( sock );
         locals[lstr] = sock;
      }
   }
