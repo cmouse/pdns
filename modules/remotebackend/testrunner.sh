@@ -2,6 +2,7 @@
 
 webrick_pid=""
 socat_pid=""
+zeromq_pid=""
 socat=/usr/bin/socat
 
 function start_web() {
@@ -26,6 +27,27 @@ function stop_web() {
    while [ $i -lt 5 ]; do
      sleep 1
      kill -0 $webrick_pid 2>/dev/null
+     if [ $? -ne 0 ]; then break; fi
+     let i=i+1
+   done
+ fi
+}
+
+function start_zeromq() {
+  if [ x"$REMOTEBACKEND_ZEROMQ" == "xyes" ]; then
+   ./unittest_zeromq.rb &
+   zreromq_pid=$!
+  fi
+}
+
+function stop_zeromq() {
+ if [ ! -z "$zeromqrick_pid" ]; then
+   kill -TERM $zeromqrick_pid
+   # wait a moment for it to die
+   i=0
+   while [ $i -lt 5 ]; do
+     sleep 1
+     kill -0 $zeromqrick_pid 2>/dev/null
      if [ $? -ne 0 ]; then break; fi
      let i=i+1
    done
@@ -91,6 +113,12 @@ case "$mode" in
     ./test_remotebackend_json
     rv=$?
     stop_web
+  ;;
+  test_remotebackend_zeromq)
+    start_zeromq 
+    ./test_remotebackend_zeromq
+    rv=$?
+    stop_zeromq
   ;;
   *)
      echo "Usage: $0 test_remotebackend_(pipe|http|post|json)"
