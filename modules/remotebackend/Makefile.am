@@ -13,7 +13,7 @@ clean-local:
 
 lib_LTLIBRARIES = libremotebackend.la 
 
-libremotebackend_la_SOURCES=remotebackend.hh remotebackend.cc unixconnector.cc httpconnector.cc pipeconnector.cc 
+libremotebackend_la_SOURCES=remotebackend.hh remotebackend.cc unixconnector.cc httpconnector.cc pipeconnector.cc zmqconnector.cc
 
 libremotebackend_la_LDFLAGS=-module -avoid-version
 libremotebackend_la_LIBADD=$(LIBCURL_LIBS)
