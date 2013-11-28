@@ -4,6 +4,7 @@ compiler:
   - clang
 before_script:
  - sudo apt-get update
+ - sudo apt-get remove libzmq3
  - sudo apt-get install libboost-all-dev libtolua-dev bc libcdb-dev libnet-dns-perl unbound-host ldnsutils dnsutils bind9utils libtool libcdb-dev xmlto dblatex links asciidoc ruby-json ruby-sqlite3 rubygems libcurl4-openssl-dev ruby1.9.1 socat time libzmq1 libzmq-dev pkg-config
  - sudo update-alternatives --set ruby /usr/bin/ruby1.9.1
  - sudo gem install bundler --no-rdoc --no-ri --bindir /usr/local/bin
