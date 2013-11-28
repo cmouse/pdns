@@ -89,11 +89,12 @@ class ZeroMQConnector: public Connector {
     virtual int send_message(const rapidjson::Document &input);
     virtual int recv_message(rapidjson::Document &output);
    private:
-    zmq::context_t d_ctx;
-    zmq::socket_t d_sock;
+    void connect();
     std::string d_endpoint;
     int d_timeout;
     std::map<std::string,std::string> d_options;
+    zmq::context_t d_ctx;
+    zmq::socket_t d_sock;
 };
 #endif
 
