@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE(test_ComboAddress) {
   nmt6.insert(Netmask("::1"))->second=1;
   nmt6.insert(Netmask("::/0"))->second=0;
   nmt6.insert(Netmask("fe80::/16"))->second=2;
-//  BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("130.161.253.255")), (void*)0);      
+  BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("130.161.253.255")), (void*)0);
   BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("::2"))->second, 0);
   BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("::ffff"))->second, 0);  
   BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("::1"))->second, 1);
