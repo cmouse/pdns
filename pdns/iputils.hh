@@ -364,6 +364,178 @@ private:
   uint8_t d_bits;
 };
 
+template <typename T>
+class NetmaskTree {
+public:
+  class Node {
+  public:
+      Node(int bits) {
+        left = right = NULL;
+        d_bits = bits;
+        d_empty = true;
+        left = right = parent = NULL;
+      }
+
+      bool d_empty;
+      int d_bits;
+
+      Netmask first;
+      T second;
+
+      Node* make_left() {
+        if (!left) {
+          left = new Node(d_bits+1);
+          left->parent = this;
+        }
+        return left;
+      }
+
+      Node* make_right() {
+        if (!right) {
+          right = new Node(d_bits+1);
+          right->parent = this;
+        }
+        return right;
+      }
+
+      bool operator==(const Node& rhs) {
+        return d_bits == rhs.d_bits &&
+               first == rhs.first;
+      }
+
+      Node *left,*right,*parent;
+
+      ~Node() {
+        delete left;
+        delete right;
+        left = right = NULL;
+      };
+  };
+
+  NetmaskTree() {
+    root = NULL;
+  }
+
+  const std::vector<Node*> nodes() const { return _nodes; }
+
+  Node* insert(const Netmask &mask) {
+    if (root == NULL) root = new Node(0);
+    Node* node = root;
+
+    if (mask.getNetwork().sin4.sin_family == AF_INET) {
+      std::bitset<32> addr(ntohl(mask.getNetwork().sin4.sin_addr.s_addr));
+      int bits = 0;
+      while(bits < mask.getBits()) {
+        uint8_t val = addr[31-bits];
+        if (val)
+          node = node->make_right();
+        else
+          node = node->make_left();
+        bits++;
+      }
+    } else {
+      uint64_t* addr = (uint64_t*)mask.getNetwork().sin6.sin6_addr.s6_addr;
+      std::bitset<64> addr_low(be64toh(addr[1]));
+      std::bitset<64> addr_high(be64toh(addr[0]));
+      int bits = 0;
+      while(bits < mask.getBits()) {
+        uint8_t val;
+        if (bits < 64) val = addr_high[63-bits];
+        else val = addr_low[127-bits];
+        if (val)
+          node = node->make_right();
+        else
+          node = node->make_left();
+        bits++;
+      }
+    }
+    node->first = mask;
+    node->d_empty = false;
+    _nodes.push_back(node);
+    return node;
+  }
+
+  Node* lookup(const ComboAddress& value) const {
+    Node *node = root;
+    if ( node == NULL ) return NULL;
+
+    if (value.sin4.sin_family == AF_INET) {
+      std::bitset<32> addr(ntohl(value.sin4.sin_addr.s_addr));
+      int bits = 0;
+      while(bits < 32) {
+        if (node == NULL)
+          throw "you fucked up";
+        uint8_t val = addr[31-bits];
+        if (val) {
+          if (node->right) node = node->right;
+          else break;
+        } else {
+          if (node->left) node = node->left;
+          else break;
+        }
+        bits++;
+      }
+    } else {
+      uint64_t* addr = (uint64_t*)value.sin6.sin6_addr.s6_addr;
+      std::bitset<64> addr_low(be64toh(addr[1]));
+      std::bitset<64> addr_high(be64toh(addr[0]));
+      int bits = 0;
+      while(bits < 128) {
+        if (node == NULL)
+          throw "you fucked up";
+        uint8_t val;
+        if (bits < 64) val = addr_high[63-bits];
+        else val = addr_low[127-bits];
+        if (val) {
+          if (node->right) node = node->right;
+          else break;
+        } else {
+          if (node->left) node = node->left;
+          else break;
+        }
+        bits++;
+      }
+    }
+
+    return node;
+  }
+
+  bool empty() const {
+    return _nodes.empty();
+  }
+
+  bool count() const {
+    return _nodes.count();
+  }
+
+  bool size() const {
+    return _nodes.size();
+  }
+
+  bool match(const ComboAddress& value) const {
+    Node* node = lookup(value);
+    return (node != NULL && node->d_empty == false);
+  }
+
+  bool match(const std::string& value) const {
+    return match(ComboAddress(value));
+  }
+
+  void clear() {
+    delete root;
+    root = NULL;
+    _nodes.clear();
+  }
+
+  ~NetmaskTree() {
+    clear();
+  }
+
+private:
+  Node *root;
+  std::vector<Node*> _nodes;
+};
+
 /** This class represents a group of supplemental Netmask classes. An IP address matchs
     if it is matched by zero or more of the Netmask classes within.
 */
@@ -374,11 +546,8 @@ public:
 
   bool match(const ComboAddress *ip) const
   {
-    for(container_t::const_iterator i=d_masks.begin();i!=d_masks.end();++i)
-      if(i->match(ip) || (ip->isMappedIPv4() && i->match(ip->mapToIPv4()) ))
-        return true;
-
-    return false;
+    if (ip->sin4.sin_family == AF_INET) return tree4.match(*ip);
+    else return tree6.match(*ip);
   }
 
   bool match(const ComboAddress& ip) const
@@ -389,39 +558,48 @@ public:
   //! Add this Netmask to the list of possible matches
   void addMask(const string &ip)
   {
-    d_masks.push_back(Netmask(ip));
+    Netmask nm(ip);
+    if (nm.getNetwork().sin4.sin_family == AF_INET) tree4.insert(nm);
+    else tree6.insert(nm);
   }
 
   void clear()
   {
-    d_masks.clear();
+    tree4.clear();
+    tree6.clear();
   }
 
-  bool empty()
+  bool empty() const
   {
-    return d_masks.empty();
+    return tree4.empty() && tree6.empty();
   }
 
-  unsigned int size()
+  unsigned int size() const
   {
-    return (unsigned int)d_masks.size();
+    return (unsigned int)(tree4.size() + tree6.size());
   }
 
   string toString() const
   {
+    std::vector<string> vec;
+    toStringVector(&vec);
     ostringstream str;
-    for(container_t::const_iterator iter = d_masks.begin(); iter != d_masks.end(); ++iter) {
-      if(iter != d_masks.begin())
+    for(vector<string>::const_iterator iter = vec.begin(); iter != vec.end(); ++iter) {
+      if(iter != vec.begin())
         str <<", ";
-      str<<iter->toString();
+      str<<*iter;
     }
     return str.str();
   }
 
   void toStringVector(vector<string>* vec) const
   {
-    for(container_t::const_iterator iter = d_masks.begin(); iter != d_masks.end(); ++iter) {
-      vec->push_back(iter->toString());
+    vec->clear();
+    for(const auto* n : tree4.nodes()) {
+      vec->push_back(n->first.toString());
+    }
+    for(const auto* n : tree6.nodes()) {
+      vec->push_back(n->first.toString());
     }
   }
 
@@ -435,8 +613,8 @@ public:
   }
 
 private:
-  typedef vector<Netmask> container_t;
-  container_t d_masks;
+  NetmaskTree<bool> tree4;
+  NetmaskTree<bool> tree6;
 };
 
 
