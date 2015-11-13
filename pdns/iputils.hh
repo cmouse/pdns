@@ -457,7 +457,7 @@ public:
 
   Node* lookup(const ComboAddress& value) const {
     Node *node = root;
-    Node *last = root;
+    Node *last = NULL;
 
     if ( node == NULL ) return NULL;
 
