@@ -498,6 +498,7 @@ public:
     }
 
     if (node->d_empty && last) return last;
+    if (node->d_empty) return NULL;
     return node;
   }
 
