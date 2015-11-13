@@ -499,6 +499,7 @@ public:
 
     if (node->d_empty && last) return last;
     if (node->d_empty) return NULL;
+    if (!node->first.match(value)) return NULL;
     return node;
   }
 
