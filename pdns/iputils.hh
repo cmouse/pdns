@@ -457,14 +457,15 @@ public:
 
   Node* lookup(const ComboAddress& value) const {
     Node *node = root;
+    Node *last = root;
+
     if ( node == NULL ) return NULL;
 
     if (value.sin4.sin_family == AF_INET) {
       std::bitset<32> addr(ntohl(value.sin4.sin_addr.s_addr));
       int bits = 0;
       while(bits < 32) {
-        if (node == NULL)
-          throw "you fucked up";
+        if (node->d_empty == false) last = node;
         uint8_t val = addr[31-bits];
         if (val) {
           if (node->right) node = node->right;
@@ -481,8 +482,7 @@ public:
       std::bitset<64> addr_high(be64toh(addr[0]));
       int bits = 0;
       while(bits < 128) {
-        if (node == NULL)
-          throw "you fucked up";
+        if (node->d_empty == false) last = node;
         uint8_t val;
         if (bits < 64) val = addr_high[63-bits];
         else val = addr_low[127-bits];
@@ -497,6 +497,7 @@ public:
       }
     }
 
+    if (node->d_empty && last) return last;
     return node;
   }
 
