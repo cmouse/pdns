@@ -33,7 +33,7 @@
 #include "misc.hh"
 #include <sys/socket.h>
 #include <netdb.h>
-
+#include <bitset>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp>
 #include <boost/lexical_cast.hpp>
