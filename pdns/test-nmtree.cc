@@ -17,7 +17,7 @@ BOOST_AUTO_TEST_CASE(test_ComboAddress) {
   nmt.insert(Netmask("130.161.0.0/16"))->second=1;
   nmt.insert(Netmask("130.0.0.0/8"))->second=2;
 
-//  BOOST_CHECK(nmt.lookup(ComboAddress("213.244.168.210"))==nullptr);
+  BOOST_CHECK_EQUAL(nmt.lookup(ComboAddress("213.244.168.210")), (void*)0);
   auto found=nmt.lookup(ComboAddress("130.161.252.29"));
   BOOST_CHECK(found);
   BOOST_CHECK_EQUAL(found->second, 0);
@@ -25,9 +25,28 @@ BOOST_AUTO_TEST_CASE(test_ComboAddress) {
   BOOST_CHECK(found);
   BOOST_CHECK_EQUAL(found->second, 1);
   
+  BOOST_CHECK_EQUAL(nmt.lookup(ComboAddress("130.255.255.255"))->second, 2);
+  BOOST_CHECK_EQUAL(nmt.lookup(ComboAddress("130.161.252.255"))->second, 0);
+  BOOST_CHECK_EQUAL(nmt.lookup(ComboAddress("130.161.253.255"))->second, 1);  
+  
   found=nmt.lookup(ComboAddress("130.145.180.1"));
   BOOST_CHECK(found);
   BOOST_CHECK_EQUAL(found->second, 2);  
+  
+  nmt.clear();
+  BOOST_CHECK(!nmt.lookup(ComboAddress("130.161.180.1")));
+  
+  NetmaskTree<int> nmt6;
+  nmt6.insert(Netmask("::1"))->second=1;
+  nmt6.insert(Netmask("::/0"))->second=0;
+  nmt6.insert(Netmask("fe80::/16"))->second=2;
+//  BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("130.161.253.255")), (void*)0);      
+  BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("::2"))->second, 0);
+  BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("::ffff"))->second, 0);  
+  BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("::1"))->second, 1);
+  BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("fe80::1"))->second, 2);  
+      
+    
 }
 
 
