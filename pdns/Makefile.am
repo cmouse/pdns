@@ -124,9 +124,7 @@ EXTRA_PROGRAMS = \
 	toysdig \
 	tsig-tests \
 	zone2ldap \
-	zone2lmdb trie
-
-trie_SOURCES = trie.cc qtype.hh qtype.cc iputils.hh misc.cc misc.hh dnsname.cc dnsname.hh dnswriter.cc dnswriter.hh dnslabeltext.cc
+	zone2lmdb 
 
 pdns_server_SOURCES = \
 	arguments.cc arguments.hh \
