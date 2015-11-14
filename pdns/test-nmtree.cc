@@ -11,7 +11,7 @@ using namespace boost;
 
 BOOST_AUTO_TEST_SUITE(nmtree)
 
-BOOST_AUTO_TEST_CASE(test_ComboAddress) {
+BOOST_AUTO_TEST_CASE(test_basic) {
   NetmaskTree<int> nmt;
   nmt.insert(Netmask("130.161.252.0/24"))->second=0;  
   nmt.insert(Netmask("130.161.0.0/16"))->second=1;
@@ -44,9 +44,26 @@ BOOST_AUTO_TEST_CASE(test_ComboAddress) {
   BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("::2"))->second, 0);
   BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("::ffff"))->second, 0);  
   BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("::1"))->second, 1);
-  BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("fe80::1"))->second, 2);  
-      
+  BOOST_CHECK_EQUAL(nmt6.lookup(ComboAddress("fe80::1"))->second, 2);      
+}
+
+BOOST_AUTO_TEST_CASE(test_scale) {
+  string start="192.168.";
+  NetmaskTree<int> works;
+  for(int i=0; i < 256; ++i) 
+    for(int j=0; j < 256; ++j) {
+      works.insert(Netmask(start+std::to_string(i)+"."+std::to_string(j)))->second=i*j;
+    }
     
+  for(int i=0; i < 256; ++i) 
+    for(int j=0; j < 256; ++j) {
+      BOOST_CHECK_EQUAL(works.lookup(ComboAddress(start+std::to_string(i)+"."+std::to_string(j)))->second, i*j);
+    }    
+  start="130.161.";
+  for(int i=0; i < 256; ++i) 
+    for(int j=0; j < 256; ++j) {
+      BOOST_CHECK_EQUAL(works.lookup(ComboAddress(start+std::to_string(i)+"."+std::to_string(j))), (void*)0);
+    }    
 }
 
 
