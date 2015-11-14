@@ -365,9 +365,9 @@ private:
 };
 
 template <typename T>
-class NetmaskTree {
+class NetmaskTree : boost::noncopyable {
 public:
-  class Node {
+  class Node : boost::noncopyable {
   public:
       Node(int bits) {
         left = right = NULL;
@@ -416,7 +416,7 @@ public:
     root = NULL;
   }
 
-  const std::vector<Node*> nodes() const { return _nodes; }
+  const std::vector<Node*>& nodes() const { return _nodes; }
 
   Node* insert(const Netmask &mask) {
     if (root == NULL) root = new Node(0);
@@ -504,15 +504,15 @@ public:
   }
 
   bool empty() const {
-    return _nodes.empty();
+    return nodes().empty();
   }
 
-  bool count() const {
-    return _nodes.count();
+  int count() const {
+    return nodes().count();
   }
 
-  bool size() const {
-    return _nodes.size();
+  int size() const {
+    return nodes().size();
   }
 
   bool match(const ComboAddress& value) const {
