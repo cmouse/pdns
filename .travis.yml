@@ -214,6 +214,6 @@ addons:
     secret:
       secure: SRQYZ7d3jyEp3D1A5uXw/j+IIIT6YTO2+4BnCWvZ8x2Kf503QimSYJhq9c+Zm5ilkWKYPpgAnn2yN20Be1paDFs5W6xyPzX3zwFNmXspaVqmvWzyyWc3NVOdmQd/5zq9SBZdJPtzR1GZwDcnMwoFQlX4PYlYrDG68Le4hu70Mcs=
     bucket: cmouse-travis
-    region: eu-central-1
+    s3_region: eu-central-1
     paths:
       - $HOME/pdns-build.tbz2
