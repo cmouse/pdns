@@ -175,14 +175,14 @@ script:
   - make -k install DESTDIR=/tmp/pdns-install-dir
   - find /tmp/pdns-install-dir -ls
 
-  - tar --exclude-vcs --exclude='*pdns-build.tbz2*' -cjf $HOME/pdns-build.tbz2 $HOME 
-
 #  - make -j3 check
 #  - test -f pdns/test-suite.log && cat pdns/test-suite.log || true
 #  - test -f modules/remotebackend/test-suite.log && cat modules/remotebackend/test-suite.log || true
 
   #DNSName - make -k -j3 -C pdns $(grep '(EXEEXT):' pdns/Makefile | cut -f1 -d\$ | grep -E -v 'dnsdist|calidns')
   - make -k -j3 -C pdns $(grep '(EXEEXT):' pdns/Makefile | cut -f1 -d\$ | grep -E -v 'dnsdist|calidns|speedtest')
+
+  - tar --exclude-vcs -cjf $HOME/pdns-build.tbz2 $HOME/*/pdns
 
 #  - cd pdns
 #  - ./pdnsutil test-algorithms
