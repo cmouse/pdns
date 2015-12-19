@@ -175,64 +175,66 @@ script:
   - make -k install DESTDIR=/tmp/pdns-install-dir
   - find /tmp/pdns-install-dir -ls
 
-  - make -j3 check
-  - test -f pdns/test-suite.log && cat pdns/test-suite.log || true
-  - test -f modules/remotebackend/test-suite.log && cat modules/remotebackend/test-suite.log || true
+  - tar --exclude-vcs --exclude='*pdns-build.tbz2*' -cjf $HOME/pdns-build.tbz2 $HOME 
+
+#  - make -j3 check
+#  - test -f pdns/test-suite.log && cat pdns/test-suite.log || true
+#  - test -f modules/remotebackend/test-suite.log && cat modules/remotebackend/test-suite.log || true
 
   #DNSName - make -k -j3 -C pdns $(grep '(EXEEXT):' pdns/Makefile | cut -f1 -d\$ | grep -E -v 'dnsdist|calidns')
   - make -k -j3 -C pdns $(grep '(EXEEXT):' pdns/Makefile | cut -f1 -d\$ | grep -E -v 'dnsdist|calidns|speedtest')
 
-  - cd pdns
-  - ./pdnsutil test-algorithms
-  - cd ..
+#  - cd pdns
+#  - ./pdnsutil test-algorithms
+#  - cd ..
 
-  - cd regression-tests
-  - ./timestamp ./start-test-stop 5300 bind-both
-  - ./timestamp ./start-test-stop 5300 bind-dnssec-both
-  - ./timestamp ./start-test-stop 5300 bind-dnssec-nsec3-both
-  - ./timestamp ./start-test-stop 5300 bind-dnssec-nsec3-optout-both
-  - ./timestamp ./start-test-stop 5300 bind-dnssec-nsec3-narrow
-  - ./timestamp ./start-test-stop 5300 bind-hybrid-nsec3
-  - ./timestamp ./start-test-stop 5300 bind-dnssec-pkcs11
-
-  - ./timestamp ./start-test-stop 5300 geoip
-  - ./timestamp ./start-test-stop 5300 geoip-nsec3-narrow
-
-  - ./timestamp ./start-test-stop 5300 gmysql-nodnssec-both
-  - ./timestamp ./start-test-stop 5300 gmysql-both
-  - ./timestamp ./start-test-stop 5300 gmysql-nsec3-both
-  - ./timestamp ./start-test-stop 5300 gmysql-nsec3-optout-both
-  - ./timestamp ./start-test-stop 5300 gmysql-nsec3-narrow
+#  - cd regression-tests
+#  - ./timestamp ./start-test-stop 5300 bind-both
+#  - ./timestamp ./start-test-stop 5300 bind-dnssec-both
+#  - ./timestamp ./start-test-stop 5300 bind-dnssec-nsec3-both
+#  - ./timestamp ./start-test-stop 5300 bind-dnssec-nsec3-optout-both
+#  - ./timestamp ./start-test-stop 5300 bind-dnssec-nsec3-narrow
+#  - ./timestamp ./start-test-stop 5300 bind-hybrid-nsec3
+#  - ./timestamp ./start-test-stop 5300 bind-dnssec-pkcs11
+#
+#  - ./timestamp ./start-test-stop 5300 geoip
+#  - ./timestamp ./start-test-stop 5300 geoip-nsec3-narrow
+#
+#  - ./timestamp ./start-test-stop 5300 gmysql-nodnssec-both
+#  - ./timestamp ./start-test-stop 5300 gmysql-both
+#  - ./timestamp ./start-test-stop 5300 gmysql-nsec3-both
+#  - ./timestamp ./start-test-stop 5300 gmysql-nsec3-optout-both
+#  - ./timestamp ./start-test-stop 5300 gmysql-nsec3-narrow
 
   # - ./timestamp ./start-test-stop 5300 godbc_sqlite3-nsec3
 
-  - ./timestamp ./start-test-stop 5300 gpgsql-nodnssec-both
-  - ./timestamp ./start-test-stop 5300 gpgsql-both
-  - ./timestamp ./start-test-stop 5300 gpgsql-nsec3-both
-  - ./timestamp ./start-test-stop 5300 gpgsql-nsec3-optout-both
-  - ./timestamp ./start-test-stop 5300 gpgsql-nsec3-narrow
+#  - ./timestamp ./start-test-stop 5300 gpgsql-nodnssec-both
+#  - ./timestamp ./start-test-stop 5300 gpgsql-both
+#  - ./timestamp ./start-test-stop 5300 gpgsql-nsec3-both
+#  - ./timestamp ./start-test-stop 5300 gpgsql-nsec3-optout-both
+#  - ./timestamp ./start-test-stop 5300 gpgsql-nsec3-narrow
 
-  - ./timestamp ./start-test-stop 5300 gsqlite3-nodnssec-both
-  - ./timestamp ./start-test-stop 5300 gsqlite3-both
-  - ./timestamp ./start-test-stop 5300 gsqlite3-nsec3-both
-  - ./timestamp ./start-test-stop 5300 gsqlite3-nsec3-optout-both
-  - ./timestamp ./start-test-stop 5300 gsqlite3-nsec3-narrow
+#  - ./timestamp ./start-test-stop 5300 gsqlite3-nodnssec-both
+#  - ./timestamp ./start-test-stop 5300 gsqlite3-both
+#  - ./timestamp ./start-test-stop 5300 gsqlite3-nsec3-both
+#  - ./timestamp ./start-test-stop 5300 gsqlite3-nsec3-optout-both
+#  - ./timestamp ./start-test-stop 5300 gsqlite3-nsec3-narrow
 
-  - ./timestamp ./start-test-stop 5300 mydns
+#  - ./timestamp ./start-test-stop 5300 mydns
 
-  - ./timestamp ./start-test-stop 5300 opendbx-sqlite3
+#  - ./timestamp ./start-test-stop 5300 opendbx-sqlite3
 
-  - ./timestamp ./start-test-stop 5300 remotebackend-pipe
-  - ./timestamp ./start-test-stop 5300 remotebackend-pipe-dnssec
-  - ./timestamp ./start-test-stop 5300 remotebackend-unix
-  - ./timestamp ./start-test-stop 5300 remotebackend-unix-dnssec
-  - ./timestamp ./start-test-stop 5300 remotebackend-http
-  - ./timestamp ./start-test-stop 5300 remotebackend-http-dnssec
-  - ./timestamp ./start-test-stop 5300 remotebackend-zeromq
-  - ./timestamp ./start-test-stop 5300 remotebackend-zeromq-dnssec
+#  - ./timestamp ./start-test-stop 5300 remotebackend-pipe
+#  - ./timestamp ./start-test-stop 5300 remotebackend-pipe-dnssec
+#  - ./timestamp ./start-test-stop 5300 remotebackend-unix
+#  - ./timestamp ./start-test-stop 5300 remotebackend-unix-dnssec
+#  - ./timestamp ./start-test-stop 5300 remotebackend-http
+#  - ./timestamp ./start-test-stop 5300 remotebackend-http-dnssec
+#  - ./timestamp ./start-test-stop 5300 remotebackend-zeromq
+#  - ./timestamp ./start-test-stop 5300 remotebackend-zeromq-dnssec
 
-  - ./timestamp ./start-test-stop 5300 tinydns
-  - cd ..
+#  - ./timestamp ./start-test-stop 5300 tinydns
+#  - cd ..
 
 
   ### recursor ###
@@ -244,64 +246,64 @@ script:
   - cd ..
 
   # distribution build
-  - ./build-scripts/dist-recursor
-  - cd pdns/pdns-recursor-*/
-  - ./configure
-  - make -k -j3
-  - cd ..
-  - ln -s pdns-recursor*/pdns_recursor .
-  - cd ..
+#  - ./build-scripts/dist-recursor
+#  - cd pdns/pdns-recursor-*/
+#  - ./configure
+#  - make -k -j3
+#  - cd ..
+#  - ln -s pdns-recursor*/pdns_recursor .
+#  - cd ..
 
   # regression-tests
-  - cd regression-tests.recursor
-  - cp vars.sample vars
-  - ./config.sh
-  - ./start.sh
-  - sleep 3
-  - svstat configs/*
-  - ./runtests
+#  - cd regression-tests.recursor
+#  - cp vars.sample vars
+#  - ./config.sh
+#  - ./start.sh
+#  - sleep 3
+#  - svstat configs/*
+#  - ./runtests
   #DNSName: - test ! -s ./failed_tests
-  - ./stop.sh
-  - sleep 3
-  - ./clean.sh
-  - cd ..
+#  - ./stop.sh
+#  - sleep 3
+#  - ./clean.sh
+#  - cd ..
 
   # bulktest
-  - cd regression-tests
-  - THRESHOLD=90 TRACE=no ./timestamp ./recursor-test 5300 25000
-  - cd ..
+#  - cd regression-tests
+#  - THRESHOLD=90 TRACE=no ./timestamp ./recursor-test 5300 25000
+#  - cd ..
 
 
   ### dnsdist ###
 
   # distribution build
-  - ./build-scripts/dist-dnsdist
-  - cd pdns/dnsdistdist
-  - tar xf dnsdist*.tar.bz2
-  - cd dnsdist-*
-  - ./configure --enable-unit-tests
-  - make -k -j3
-  - ./testrunner
-  - cp ./dnsdist ../../../regression-tests.dnsdist/
-  - cd ../../../regression-tests.dnsdist
-  - DNSDISTBIN=./dnsdist ./runtests
-  - rm -f ./dnsdist
-  - cd ..
-  - rm -rf pdns/dnsdistdist/dnsdist-*/
-
+#  - ./build-scripts/dist-dnsdist
+#  - cd pdns/dnsdistdist
+#  - tar xf dnsdist*.tar.bz2
+#  - cd dnsdist-*
+#  - ./configure --enable-unit-tests
+#  - make -k -j3
+#  - ./testrunner
+#  - cp ./dnsdist ../../../regression-tests.dnsdist/
+#  - cd ../../../regression-tests.dnsdist
+#  - DNSDISTBIN=./dnsdist ./runtests
+#  - rm -f ./dnsdist
+#  - cd ..
+#  - rm -rf pdns/dnsdistdist/dnsdist-*/
+#
 
   ### api ###
-  - cd regression-tests.api
-  - ./runtests authoritative
-  - ./runtests recursor
-  - cd ..
+#  - cd regression-tests.api
+#  - ./runtests authoritative
+#  - ./runtests recursor
+#  - cd ..
 
 
   ### no backend tests ###
-  - cd regression-tests.nobackend/
-  - ./runtests
-  - test ! -s ./failed_tests
-  - cd ..
+#  - cd regression-tests.nobackend/
+#  - ./runtests
+#  - test ! -s ./failed_tests
+#  - cd ..
 
 
   - git status
@@ -316,3 +318,13 @@ notifications:
       - "%{author} @ %{repository} / %{branch} - Build:#%{build_number} : %{message} - Changes: %{compare_url} - Build details: %{build_url}"
     use_notice: true
     skip_join: true
+addons:
+  artifacts:
+    key:
+      secure: MfcaeGzZ5a+HkAIaLeJ7qToQ0bEUuJQ17vAL65E1P291uf1yfDn4s1lIUuPl4YWi1qKz/0pc9l3mUFlAdRu3XUpUWoNpjvA4SFn0UD/dWyXXdVM5mkf65pj8W/N8rLgdMBIlwid+80c5ZlvgBZEXPPw/HSdpLvwqecJ4HygZqmU=
+    secret:
+      secure: SRQYZ7d3jyEp3D1A5uXw/j+IIIT6YTO2+4BnCWvZ8x2Kf503QimSYJhq9c+Zm5ilkWKYPpgAnn2yN20Be1paDFs5W6xyPzX3zwFNmXspaVqmvWzyyWc3NVOdmQd/5zq9SBZdJPtzR1GZwDcnMwoFQlX4PYlYrDG68Le4hu70Mcs=
+    bucket: cmouse-travis
+    s3_region: eu-central-1
+    paths:
+      - $HOME/pdns-build.tbz2
