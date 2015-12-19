@@ -349,6 +349,7 @@ AC_CONFIG_FILES([
   ext/mbedtls/library/Makefile
   ext/rapidjson/Makefile
   ext/json11/Makefile
+  ext/prefix_vector/Makefile
   modules/bindbackend/Makefile
   modules/geoipbackend/Makefile
   modules/gmysqlbackend/Makefile

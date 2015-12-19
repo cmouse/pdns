@@ -11,7 +11,8 @@ AM_CXXFLAGS = \
 
 AM_LDFLAGS = \
 	$(PROGRAM_LDFLAGS) \
-	$(THREADFLAGS)
+	$(THREADFLAGS) \
+        $(top_srcdir)/ext/prefix_vector/libprefixvector.la
 
 AM_LFLAGS = -i
 AM_YFLAGS = -d --verbose --debug
