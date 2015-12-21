@@ -166,11 +166,11 @@ script:
 
   - make -k -j3
 
-  - cd docs
-  - source $HOME/.venv/bin/activate
-  - make check-links
-  - deactivate
-  - cd ..
+#  - cd docs
+#  - source $HOME/.venv/bin/activate
+#  - make check-links
+#  - deactivate
+#  - cd ..
 
   - make -k install DESTDIR=/tmp/pdns-install-dir
   - find /tmp/pdns-install-dir -ls
@@ -182,7 +182,7 @@ script:
   #DNSName - make -k -j3 -C pdns $(grep '(EXEEXT):' pdns/Makefile | cut -f1 -d\$ | grep -E -v 'dnsdist|calidns')
   - make -k -j3 -C pdns $(grep '(EXEEXT):' pdns/Makefile | cut -f1 -d\$ | grep -E -v 'dnsdist|calidns|speedtest')
 
-  - tar --exclude-vcs -cjf $HOME/pdns-build.tbz2 $HOME/*/pdns
+  - tar --exclude-vcs -cjf $HOME/pdns-build.tbz2 $HOME/*/pdns /tmp/pdns-install-dir
 
 #  - cd pdns
 #  - ./pdnsutil test-algorithms
@@ -240,10 +240,10 @@ script:
   ### recursor ###
 
   # in-tree build
-  - cd pdns
-  - make -k -j3 pdns_recursor
-  - rm -f pdns_recursor
-  - cd ..
+#  - cd pdns
+#  - make -k -j3 pdns_recursor
+#  - rm -f pdns_recursor
+#  - cd ..
 
   # distribution build
 #  - ./build-scripts/dist-recursor
@@ -325,6 +325,6 @@ addons:
     secret:
       secure: SRQYZ7d3jyEp3D1A5uXw/j+IIIT6YTO2+4BnCWvZ8x2Kf503QimSYJhq9c+Zm5ilkWKYPpgAnn2yN20Be1paDFs5W6xyPzX3zwFNmXspaVqmvWzyyWc3NVOdmQd/5zq9SBZdJPtzR1GZwDcnMwoFQlX4PYlYrDG68Le4hu70Mcs=
     bucket: cmouse-travis
-    s3_region: eu-central-1
+    s3_region: us-east-1
     paths:
       - $HOME/pdns-build.tbz2
