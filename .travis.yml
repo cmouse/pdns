@@ -324,7 +324,7 @@ addons:
       secure: MfcaeGzZ5a+HkAIaLeJ7qToQ0bEUuJQ17vAL65E1P291uf1yfDn4s1lIUuPl4YWi1qKz/0pc9l3mUFlAdRu3XUpUWoNpjvA4SFn0UD/dWyXXdVM5mkf65pj8W/N8rLgdMBIlwid+80c5ZlvgBZEXPPw/HSdpLvwqecJ4HygZqmU=
     secret:
       secure: SRQYZ7d3jyEp3D1A5uXw/j+IIIT6YTO2+4BnCWvZ8x2Kf503QimSYJhq9c+Zm5ilkWKYPpgAnn2yN20Be1paDFs5W6xyPzX3zwFNmXspaVqmvWzyyWc3NVOdmQd/5zq9SBZdJPtzR1GZwDcnMwoFQlX4PYlYrDG68Le4hu70Mcs=
-    bucket: cmouse-travis
+    bucket: cmouse-travis2
     s3_region: us-east-1
     paths:
       - $HOME/pdns-build.tbz2
