@@ -136,17 +136,20 @@ public:
 
     if ((err = mysql_stmt_bind_param(d_stmt, d_req_bind))) {
       string error(mysql_stmt_error(d_stmt));
+      internalReset();
       throw SSqlException("Could not bind mysql statement: " + d_query + string(": ") + error);
     }
 
     if ((err = mysql_stmt_execute(d_stmt))) {
       string error(mysql_stmt_error(d_stmt));
+      internalReset();
       throw SSqlException("Could not execute mysql statement: " + d_query + string(": ") + error);
     }
 
     // MySQL documentation says you can call this safely for all queries
     if ((err = mysql_stmt_store_result(d_stmt))) {
       string error(mysql_stmt_error(d_stmt));
+      internalReset();
       throw SSqlException("Could not store mysql statement: " + d_query + string(": ") + error);
     }
 
@@ -175,6 +178,7 @@ public:
   
         if ((err = mysql_stmt_bind_result(d_stmt, d_res_bind))) {
           string error(mysql_stmt_error(d_stmt));
+          internalReset();
           throw SSqlException("Could not bind parameters to mysql statement: " + d_query + string(": ") + error);
         }
       }
@@ -195,6 +199,7 @@ public:
     if ((err =mysql_stmt_fetch(d_stmt))) {
       if (err != MYSQL_DATA_TRUNCATED) {
         string error(mysql_stmt_error(d_stmt));
+        internalReset();
         throw SSqlException("Could not fetch result: " + d_query + string(": ") + error);
       }
     }
@@ -220,6 +225,7 @@ public:
       while(!mysql_stmt_next_result(d_stmt)) {
         if ((err = mysql_stmt_store_result(d_stmt))) {
           string error(mysql_stmt_error(d_stmt));
+          internalReset();
           throw PDNSException("Could not store mysql statement: " + d_query + string(": ") + error);
         }
         d_resnum = mysql_stmt_num_rows(d_stmt);
@@ -228,6 +234,7 @@ public:
         if (d_resnum>0) { // ignore empty result set
           if ((err = mysql_stmt_bind_result(d_stmt, d_res_bind))) {
             string error(mysql_stmt_error(d_stmt));
+            internalReset();
             throw SSqlException("Could not bind parameters to mysql statement: " + d_query + string(": ") + error);
           }
           d_residx = 0;
@@ -266,17 +273,7 @@ public:
       string error(mysql_stmt_error(d_stmt));
       throw SSqlException("Could not get next result from mysql statement: " + d_query + string(": ") + error);
     }
-    mysql_stmt_reset(d_stmt);
-    if (d_req_bind) {
-      for(int i=0;i<d_parnum;i++) {
-        if (d_req_bind[i].buffer) delete [] (char*)d_req_bind[i].buffer;
-        if (d_req_bind[i].length) delete [] d_req_bind[i].length;
-      }
-      memset(d_req_bind, 0, sizeof(MYSQL_BIND)*d_parnum);
-    }
-    d_residx = d_resnum = 0;
-    d_paridx = 0;
-    return this;
+    return internalReset();
   }
 
   const std::string& getQuery() { return d_query; }
@@ -304,6 +301,20 @@ public:
     }
   }
 private:
+  SSQLStatement *internalReset()
+    mysql_stmt_reset(d_stmt);
+    if (d_req_bind) {
+      for(int i=0;i<d_parnum;i++) {
+        if (d_req_bind[i].buffer) delete [] (char*)d_req_bind[i].buffer;
+        if (d_req_bind[i].length) delete [] d_req_bind[i].length;
+      }
+      memset(d_req_bind, 0, sizeof(MYSQL_BIND)*d_parnum);
+    }
+    d_residx = d_resnum = 0;
+    d_paridx = 0;
+    return this;
+  }
+
   MYSQL* d_db;
 
   MYSQL_STMT* d_stmt;
