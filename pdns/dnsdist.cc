@@ -46,6 +46,7 @@
 #include "dnsdist-console.hh"
 #include "dnsdist-ecs.hh"
 #include "dnsdist-lua.hh"
+#include "dnsdist-netlink.hh"
 #include "dnsdist-rings.hh"
 
 #include "base64.hh"
@@ -1800,9 +1801,18 @@ void* maintThread()
 void* healthChecksThread()
 {
   int interval = 1;
+  int nlFD = dnsdist_open_netlink();
+  bool reopen{false};
+
+  errlog("nlFD = %d", nlFD);
 
   for(;;) {
     sleep(interval);
+
+    // check if we need to reopen sockets
+    if (nlFD > -1 && dnsdist_should_reopen(nlFD, reopen) > 0 && reopen) {
+      errlog("Should reopen sockets!");      
+    }
 
     if(g_tcpclientthreads->getQueuedCount() > 1 && !g_tcpclientthreads->hasReachedMaxThreads())
       g_tcpclientthreads->addTCPClientThread();
@@ -2190,6 +2200,9 @@ try
 #endif
 #ifdef HAVE_SYSTEMD
       cout<<"systemd";
+#endif
+#ifdef HAVE_RTNETLINK
+      cout<<"netlink";
 #endif
       cout<<endl;
       exit(EXIT_SUCCESS);

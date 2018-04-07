@@ -103,6 +103,7 @@ dnsdist_SOURCES = \
 	dnsdist-lua-inspection.cc \
 	dnsdist-lua-rules.cc \
 	dnsdist-lua-vars.cc \
+	dnsdist-netlink.cc \
 	dnsdist-protobuf.cc dnsdist-protobuf.hh \
 	dnsdist-rings.cc dnsdist-rings.hh \
 	dnsdist-snmp.cc dnsdist-snmp.hh \
